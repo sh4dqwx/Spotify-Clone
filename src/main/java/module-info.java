@@ -7,6 +7,7 @@ module pl.pb.spotifyclone {
     requires com.dlsc.formsfx;
     requires org.kordamp.ikonli.javafx;
     requires static lombok;
+    requires jlayer;
 
     opens pl.pb.spotifyclone to javafx.fxml;
     exports pl.pb.spotifyclone;

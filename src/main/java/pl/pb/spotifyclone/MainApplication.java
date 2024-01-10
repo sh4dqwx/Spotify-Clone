@@ -4,8 +4,12 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import pl.pb.spotifyclone.models.MusicPlayer;
+import pl.pb.spotifyclone.models.Track;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class MainApplication extends Application {
     @Override
@@ -18,6 +22,10 @@ public class MainApplication extends Application {
         ViewManager viewManager = ViewManager.getInstance();
         viewManager.setStage(stage);
         viewManager.switchView("home-view.fxml");
+
+        Track track = new Track(Files.readAllBytes(Paths.get("/home/bartek/Downloads/file_example_WAV_2MG.wav")), "wav");
+        MusicPlayer.getInstance().setCurrentTrack(track);
+        MusicPlayer.getInstance().start();
     }
 
     public static void main(String[] args) {
