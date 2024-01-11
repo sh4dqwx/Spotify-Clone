@@ -57,9 +57,16 @@ public class MP3Player implements IFilePlayer {
     throw new UnsupportedOperationException("Unimplemented method 'pause'");
   }
 
+
   @Override
   public void resume() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'resume'");
+  }
+
+  @Override
+  public void subscribe(Subscriber<TrackProgressInfo> subscriber) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'subscribe'");
   }
 }

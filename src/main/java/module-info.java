@@ -1,6 +1,7 @@
 module pl.pb.spotifyclone {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.media;
     requires java.desktop;
 
     requires org.controlsfx.controls;
