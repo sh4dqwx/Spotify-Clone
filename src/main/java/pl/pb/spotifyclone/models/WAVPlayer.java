@@ -32,7 +32,7 @@ public class WAVPlayer implements IFilePlayer {
             listenerThreadRunning.set(true);
             while(true) {
               if(listenerThreadRunning.get() == false) continue;
-              int position = (int)(clip.getMicrosecondPosition() / 1_000_000);
+              int position = (int)(Math.ceil(clip.getMicrosecondPosition() / 1_000_000.0));
               if(currentPosition != position) {
                 currentPosition = position;
                 currentPositionProvider.notifySubscribers(new TrackProgressInfo(position, length));
@@ -55,7 +55,7 @@ public class WAVPlayer implements IFilePlayer {
       clip.open(audioStream);
 
       currentPosition = 0;
-      length = (int)(clip.getMicrosecondLength() / 1_000_000);
+      length = (int)(Math.ceil(clip.getMicrosecondLength() / 1_000_000.0));
 
       clip.start();
     } catch(Exception ex) {

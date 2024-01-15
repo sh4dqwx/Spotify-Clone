@@ -30,7 +30,10 @@ public class MusicPlayer extends Provider<TrackProgressInfo> {
   public void setCurrentTrack(Track track) { currentTrack = track; }
 
   public void start() {
-    currentFilePlayer = filePlayerFactory.createWAVPlayer();
+    switch(currentTrack.getFileType()) {
+      case TrackType.WAV -> currentFilePlayer = filePlayerFactory.createWAVPlayer();
+      case TrackType.MP3 -> currentFilePlayer = filePlayerFactory.createMP3Player();
+    }
     currentFilePlayer.subscribe(subscriber);
     currentFilePlayer.start(currentTrack);
   }

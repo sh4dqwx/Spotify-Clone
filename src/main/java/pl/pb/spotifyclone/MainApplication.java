@@ -8,10 +8,12 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import pl.pb.spotifyclone.models.MusicPlayer;
 import pl.pb.spotifyclone.models.Track;
+import pl.pb.spotifyclone.models.TrackType;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class MainApplication extends Application {
     @Override
@@ -31,8 +33,9 @@ public class MainApplication extends Application {
         viewManager.switchView("home-view.fxml");
 
         try {
-          Track track = new Track(Files.readAllBytes(Paths.get("/home/bartek/Downloads/file_example_WAV_2MG.wav")), "wav");
-          MusicPlayer.getInstance().setCurrentTrack(track);
+          ArrayList<Track> tracks = new ArrayList<>();
+          tracks.add(new Track(Files.readAllBytes(Paths.get("/home/bartek/Downloads/sample-12s.mp3")), TrackType.MP3));
+          MusicPlayer.getInstance().setCurrentTrack(tracks.get(0));
           MusicPlayer.getInstance().start();
           //Thread.sleep(5000);
           //MusicPlayer.getInstance().pause();
