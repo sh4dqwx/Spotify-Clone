@@ -1,6 +1,14 @@
 package pl.pb.spotifyclone.models;
 
 public enum TrackType {
-  WAV,
-  MP3
+  WAV(".wav"),
+  MP3(".mp3");
+
+  private final String value;
+
+  TrackType(String value) {
+    this.value = value;
+  }
+
+  public String getValue() { return value; }
 }
