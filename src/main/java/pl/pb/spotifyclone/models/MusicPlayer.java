@@ -11,6 +11,7 @@ import java.util.List;
 
 public class MusicPlayer {
     private static MusicPlayer instance;
+    private Playlist currentPlaylist;
     private Track currentTrack;
     private TrackProgress currentTrackProgress;
     private MediaPlayer player;
