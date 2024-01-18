@@ -6,6 +6,7 @@ import pl.pb.spotifyclone.models.interfaces.IPublisher;
 import pl.pb.spotifyclone.models.interfaces.ISubscriber;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MusicService implements IMusicService, IPublisher<TrackProgress>, ISubscriber<MusicPlayerInfo> {
@@ -41,10 +42,8 @@ public class MusicService implements IMusicService, IPublisher<TrackProgress>, I
 
     @Override
     public void setSingleTrack(Track track) {
-        currentPlaylist = null;
-        currentPlaylistIterator = null;
-        currentTrack = track;
-        setPlayer();
+        currentPlaylist = new Playlist(track.getTitle(), new ArrayList<>(List.of(track)));
+        setTrackOrder(PlaylistIteratorType.CLASSIC);
     }
 
     @Override
@@ -57,6 +56,11 @@ public class MusicService implements IMusicService, IPublisher<TrackProgress>, I
     public void setTrackOrder(PlaylistIteratorType type) {
         currentPlaylistIterator = currentPlaylist.iterator(type);
         getNextTrack();
+    }
+
+    @Override
+    public void setLooped(boolean looped) {
+        currentPlaylistIterator.setLooped(looped);
     }
 
     @Override
@@ -81,7 +85,7 @@ public class MusicService implements IMusicService, IPublisher<TrackProgress>, I
         System.out.println("{ " + object.status() + ", " + object.trackProgress().position() + ", " + object.trackProgress().length() + " }");
         notifySubscribers(object.trackProgress());
         if(object.status() != MusicPlayerStatus.FINISHED) return;
-        if(currentPlaylistIterator == null || !currentPlaylistIterator.hasNext()) return;
+        if(!currentPlaylistIterator.hasNext()) return;
         getNextTrack();
         player.start();
     }

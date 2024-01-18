@@ -9,4 +9,5 @@ public interface IMusicService extends IMusicPlayer {
     void setSingleTrack(Track track);
     void setPlaylist(Playlist playlist);
     void setTrackOrder(PlaylistIteratorType type);
+    void setLooped(boolean looped);
 }
