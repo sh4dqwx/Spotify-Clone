@@ -14,4 +14,6 @@ module pl.pb.spotifyclone {
     exports pl.pb.spotifyclone;
     exports pl.pb.spotifyclone.viewmodels;
     opens pl.pb.spotifyclone.viewmodels to javafx.fxml;
+    exports pl.pb.spotifyclone.models;
+    opens pl.pb.spotifyclone.models to javafx.fxml;
 }

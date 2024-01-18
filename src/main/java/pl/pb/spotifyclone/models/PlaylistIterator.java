@@ -6,7 +6,6 @@ import java.util.List;
 
 public abstract class PlaylistIterator {
     protected final List<Track> tracks;
-    protected int currentTrack = 0;
     protected boolean looped = false;
 
     protected PlaylistIterator(List<Track> tracks) {

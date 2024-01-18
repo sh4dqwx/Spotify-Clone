@@ -8,7 +8,7 @@ import pl.pb.spotifyclone.models.interfaces.ISubscriber;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MusicService implements IMusicService, IPublisher<TrackProgress>, ISubscriber<TrackProgress> {
+public class MusicService implements IMusicService, IPublisher<TrackProgress>, ISubscriber<MusicPlayerInfo> {
     private static MusicService instance;
     private Playlist currentPlaylist;
     private PlaylistIterator currentPlaylistIterator;
@@ -24,6 +24,16 @@ public class MusicService implements IMusicService, IPublisher<TrackProgress>, I
         }
     }
 
+    private void setPlayer() {
+        player = new MusicPlayer(currentTrack);
+        ((IPublisher<MusicPlayerInfo>)player).subscribe(this);
+    }
+
+    private void getNextTrack() {
+        currentTrack = currentPlaylistIterator.next();
+        setPlayer();
+    }
+
     public static MusicService getInstance() {
         if(instance == null) instance = new MusicService();
         return instance;
@@ -34,20 +44,19 @@ public class MusicService implements IMusicService, IPublisher<TrackProgress>, I
         currentPlaylist = null;
         currentPlaylistIterator = null;
         currentTrack = track;
-        player = new MusicPlayer(currentTrack);
+        setPlayer();
     }
 
     @Override
     public void setPlaylist(Playlist playlist) {
         currentPlaylist = playlist;
         setTrackOrder(PlaylistIteratorType.CLASSIC);
-        currentTrack = currentPlaylistIterator.next();
-        player = new MusicPlayer(currentTrack);
     }
 
     @Override
     public void setTrackOrder(PlaylistIteratorType type) {
         currentPlaylistIterator = currentPlaylist.iterator(type);
+        getNextTrack();
     }
 
     @Override
@@ -68,7 +77,12 @@ public class MusicService implements IMusicService, IPublisher<TrackProgress>, I
     }
 
     @Override
-    public void update(TrackProgress object) {
-        notifySubscribers(object);
+    public void update(MusicPlayerInfo object) {
+        System.out.println("{ " + object.status() + ", " + object.trackProgress().position() + ", " + object.trackProgress().length() + " }");
+        notifySubscribers(object.trackProgress());
+        if(object.status() != MusicPlayerStatus.FINISHED) return;
+        if(currentPlaylistIterator == null || !currentPlaylistIterator.hasNext()) return;
+        getNextTrack();
+        player.start();
     }
 }

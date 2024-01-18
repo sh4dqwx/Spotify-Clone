@@ -11,15 +11,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class MusicPlayer implements IMusicPlayer, IPublisher<TrackProgress> {
+public class MusicPlayer implements IMusicPlayer, IPublisher<MusicPlayerInfo> {
     private final MediaPlayer player;
     private File musicFile;
     private TrackProgress currentTrackProgress;
-    private final List<ISubscriber<TrackProgress>> subscribers = new ArrayList<>();
+    private final List<ISubscriber<MusicPlayerInfo>> subscribers = new ArrayList<>();
 
-    private void notifySubscribers(TrackProgress trackProgress) {
-        for(ISubscriber<TrackProgress> subscriber : subscribers) subscriber.update(trackProgress);
+    private void notifySubscribers(MusicPlayerInfo musicPlayerInfo) {
+        for(ISubscriber<MusicPlayerInfo> subscriber : subscribers) subscriber.update(musicPlayerInfo);
     }
 
     public MusicPlayer(Track track) {
@@ -36,9 +37,9 @@ public class MusicPlayer implements IMusicPlayer, IPublisher<TrackProgress> {
         player = new MediaPlayer(media);
 
         player.statusProperty().addListener((observableValue, status, newStatus) -> {
-            if(newStatus == MediaPlayer.Status.READY) {
-                currentTrackProgress = new TrackProgress(0, (int)player.getTotalDuration().toSeconds());
-                notifySubscribers(currentTrackProgress);
+            if (newStatus == MediaPlayer.Status.READY) {
+                currentTrackProgress = new TrackProgress(0, (int) player.getTotalDuration().toSeconds());
+                notifySubscribers(new MusicPlayerInfo(MusicPlayerStatus.READY, currentTrackProgress));
             }
         });
 
@@ -46,7 +47,11 @@ public class MusicPlayer implements IMusicPlayer, IPublisher<TrackProgress> {
             int position = (int)player.getCurrentTime().toSeconds();
             if(currentTrackProgress.position() == position) return;
             currentTrackProgress = new TrackProgress(position, currentTrackProgress.length());
-            notifySubscribers(currentTrackProgress);
+            notifySubscribers(new MusicPlayerInfo(MusicPlayerStatus.PLAYING, currentTrackProgress));
+        });
+
+        player.setOnEndOfMedia(() -> {
+            notifySubscribers(new MusicPlayerInfo(MusicPlayerStatus.FINISHED, currentTrackProgress));
         });
     }
 
@@ -61,7 +66,7 @@ public class MusicPlayer implements IMusicPlayer, IPublisher<TrackProgress> {
     }
 
     @Override
-    public void subscribe(ISubscriber<TrackProgress> subscriber) {
+    public void subscribe(ISubscriber<MusicPlayerInfo> subscriber) {
         subscribers.add(subscriber);
     }
 }
