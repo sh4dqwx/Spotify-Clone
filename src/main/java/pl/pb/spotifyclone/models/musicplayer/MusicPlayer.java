@@ -1,7 +1,10 @@
-package pl.pb.spotifyclone.models;
+package pl.pb.spotifyclone.models.musicplayer;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+import pl.pb.spotifyclone.models.track.Track;
+import pl.pb.spotifyclone.models.track.TrackProgress;
 import pl.pb.spotifyclone.models.interfaces.IMusicPlayer;
 import pl.pb.spotifyclone.models.interfaces.IPublisher;
 import pl.pb.spotifyclone.models.interfaces.ISubscriber;
@@ -11,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MusicPlayer implements IMusicPlayer, IPublisher<MusicPlayerInfo> {
     private final MediaPlayer player;
@@ -38,8 +40,21 @@ public class MusicPlayer implements IMusicPlayer, IPublisher<MusicPlayerInfo> {
 
         player.statusProperty().addListener((observableValue, status, newStatus) -> {
             if (newStatus == MediaPlayer.Status.READY) {
-                currentTrackProgress = new TrackProgress(0, (int) player.getTotalDuration().toSeconds());
-                notifySubscribers(new MusicPlayerInfo(MusicPlayerStatus.READY, currentTrackProgress));
+                currentTrackProgress = new TrackProgress(0, (int)player.getTotalDuration().toSeconds());
+                notifySubscribers(new MusicPlayerInfo(
+                        track.getName(),
+                        track.getAuthorName(),
+                        MusicPlayerStatus.READY,
+                        currentTrackProgress
+                ));
+            }
+            else if(newStatus == MediaPlayer.Status.PAUSED) {
+                notifySubscribers(new MusicPlayerInfo(
+                        track.getName(),
+                        track.getAuthorName(),
+                        MusicPlayerStatus.PAUSED,
+                        currentTrackProgress
+                ));
             }
         });
 
@@ -47,11 +62,21 @@ public class MusicPlayer implements IMusicPlayer, IPublisher<MusicPlayerInfo> {
             int position = (int)player.getCurrentTime().toSeconds();
             if(currentTrackProgress.position() == position) return;
             currentTrackProgress = new TrackProgress(position, currentTrackProgress.length());
-            notifySubscribers(new MusicPlayerInfo(MusicPlayerStatus.PLAYING, currentTrackProgress));
+            notifySubscribers(new MusicPlayerInfo(
+                    track.getName(),
+                    track.getAuthorName(),
+                    MusicPlayerStatus.PLAYING,
+                    currentTrackProgress
+            ));
         });
 
         player.setOnEndOfMedia(() -> {
-            notifySubscribers(new MusicPlayerInfo(MusicPlayerStatus.FINISHED, currentTrackProgress));
+            notifySubscribers(new MusicPlayerInfo(
+                    track.getName(),
+                    track.getAuthorName(),
+                    MusicPlayerStatus.FINISHED,
+                    currentTrackProgress
+            ));
         });
     }
 
@@ -63,6 +88,21 @@ public class MusicPlayer implements IMusicPlayer, IPublisher<MusicPlayerInfo> {
     @Override
     public void pause() {
         player.pause();
+    }
+
+    @Override
+    public void stop() {
+        player.stop();
+    }
+
+    @Override
+    public void setVolume(double value) {
+        player.setVolume(value / 100);
+    }
+
+    @Override
+    public void setPosition(double value) {
+        player.seek(new Duration(value * 1000));
     }
 
     @Override

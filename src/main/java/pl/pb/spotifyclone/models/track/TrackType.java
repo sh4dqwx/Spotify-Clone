@@ -1,4 +1,4 @@
-package pl.pb.spotifyclone.models;
+package pl.pb.spotifyclone.models.track;
 
 public enum TrackType {
   WAV(".wav"),

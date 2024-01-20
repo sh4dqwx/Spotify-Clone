@@ -34,8 +34,8 @@ public class ViewManager {
         GridPane.setHgrow(view, Priority.ALWAYS);
         GridPane.setVgrow(view, Priority.ALWAYS);
 
-       /* if(mainGrid.getChildren().size() >= 2)
-            mainGrid.getChildren().removeFirst();*/
+       if(mainGrid.getChildren().size() >= 2)
+            mainGrid.getChildren().removeFirst();
         mainGrid.add(view, 0, 0);
 
         stage.show();

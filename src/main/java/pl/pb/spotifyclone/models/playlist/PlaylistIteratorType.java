@@ -1,4 +1,4 @@
-package pl.pb.spotifyclone.models;
+package pl.pb.spotifyclone.models.playlist;
 
 public enum PlaylistIteratorType {
     CLASSIC,

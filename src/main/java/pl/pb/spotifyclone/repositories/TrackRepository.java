@@ -1,11 +1,10 @@
 package pl.pb.spotifyclone.repositories;
 
 import lombok.Getter;
-import pl.pb.spotifyclone.models.Track;
+import pl.pb.spotifyclone.models.track.Track;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class TrackRepository {
     @Getter
@@ -16,21 +15,38 @@ public class TrackRepository {
         trackList = new ArrayList<>();
     }
 
-    public void AddTrack(Track track) throws Exception {
+    public void addTrack(Track track) throws Exception {
         if(track == null)
             throw new Exception("Track can not be null");
 
+        try {
+            track.setId(trackList.getLast().getId() + 1);
+        } catch (Exception e) {
+            track.setId(0L);
+        }
         trackList.add(track);
     }
 
-    public Track GetTrack(String title) {
+    public void editTrack(Track track) throws Exception {
+        if(track == null)
+            throw new Exception("Track can not be null");
+
+        trackList.replaceAll(existingTrack -> {
+            if (existingTrack.getId().equals(track.getId()))
+                return track;
+            else
+                return existingTrack;
+        });
+    }
+
+    public Track getTrack(String title) {
         return trackList.stream()
-                .filter(track -> track.getTitle().equals(title))
+                .filter(track -> track.getName().equals(title))
                 .findFirst()
                 .orElse(null);
     }
 
-    public List<Track> GetTrackList() {
+    public List<Track> getTrackList() {
         return new ArrayList<>(trackList);
     }
 }

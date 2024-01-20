@@ -39,12 +39,65 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="21.0" prefWidth="65.0" spacing="5.0" styleClass="primary_color" stylesheets="@style.css">
+            <HBox alignment="CENTER_LEFT" onMouseClicked="#showAddTrackPopup" prefHeight="21.0" prefWidth="65.0" spacing="35.0" styleClass="primary_color" stylesheets="@style.css">
                <children>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="primary_color" />
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="primary_color">
+                     <image>
+                        <Image url="@icons/add_track_white.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="50.0" />
+                     </HBox.margin>
+                  </ImageView>
                   <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Dodaj utwór" textAlignment="CENTER">
                      <font>
-                        <Font name="Lato Regular" size="18.0" />
+                        <Font name="Lato Regular" size="22.0" />
+                     </font>
+                  </Text>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" onMouseClicked="#showImportPlaylistPopup" prefHeight="21.0" prefWidth="65.0" spacing="35.0" styleClass="primary_color" stylesheets="@style.css">
+               <children>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="primary_color">
+                     <image>
+                        <Image url="@icons/import_white.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="50.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Importuj playlistę" textAlignment="CENTER">
+                     <font>
+                        <Font name="Lato Regular" size="22.0" />
+                     </font>
+                  </Text>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="21.0" prefWidth="65.0" spacing="35.0" styleClass="primary_color" stylesheets="@style.css">
+               <children>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="primary_color">
+                     <image>
+                        <Image url="@icons/export_white.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="50.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Eksportuj playlistę" textAlignment="CENTER">
+                     <font>
+                        <Font name="Lato Regular" size="22.0" />
                      </font>
                   </Text>
                </children>
