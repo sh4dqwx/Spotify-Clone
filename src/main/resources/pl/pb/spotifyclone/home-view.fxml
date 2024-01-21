@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -85,7 +87,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="21.0" prefWidth="65.0" spacing="35.0" styleClass="primary_color" stylesheets="@style.css">
+            <HBox alignment="CENTER_LEFT" onMouseClicked="#showExportPlaylistPopup" prefHeight="21.0" prefWidth="65.0" spacing="35.0" styleClass="primary_color" stylesheets="@style.css">
                <children>
                   <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="primary_color">
                      <image>
@@ -112,7 +114,13 @@
       </VBox>
       <VBox spacing="5.0" styleClass="primary_color" stylesheets="@style.css" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
          <children>
-            <TextField promptText="Czego chcesz posłuchać?" />
+            <TextField styleClass="search-container" promptText="Czego chcesz posłuchać?" />
+            <TableView fx:id="playlistTableView" prefHeight="200.0" styleClass="primary_color" stylesheets="@style.css" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="playlistNameColumn" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="760.0" text="Nazwa playlisty" reorderable="false"/>
+                  <TableColumn fx:id="playlistTrackCountColumn" prefWidth="217.0" text="Ilość utworów" reorderable="false"/>
+               </columns>
+            </TableView>
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

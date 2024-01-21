@@ -2,16 +2,15 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TextFormatter?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.util.converter.NumberStringConverter?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" styleClass="primary_color" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pb.spotifyclone.viewmodels.AddTrackViewModel">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="335.0" prefWidth="500.0" styleClass="primary_color" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pb.spotifyclone.viewmodels.AddTrackViewModel">
     <top>
         <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
             <BorderPane.margin>
@@ -62,7 +61,7 @@
                                         <Font name="Lato Regular" size="14.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="yearTextField" promptText="Podaj rok wydania:" onKeyTyped="#handleNumberTextFieldKeyTyped"/>
+                                <TextField fx:id="yearTextField" onKeyTyped="#handleNumberTextFieldKeyTyped" promptText="Podaj rok wydania:" />
                             </children>
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
@@ -76,9 +75,19 @@
                                 <Button mnemonicParsing="false" onMouseClicked="#showFileChooserDialog" text="Przeglądaj" />
                             </children>
                         </HBox>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                            <children>
+                                <Label alignment="CENTER" text="Czy utwór zawiera treści nieprzyzwoite?" textFill="#1ed760">
+                                    <font>
+                                        <Font name="Lato Regular" size="14.0" />
+                                    </font>
+                                </Label>
+                                <CheckBox fx:id="explicitCheckBox" mnemonicParsing="false" />
+                            </children>
+                        </HBox>
                     </children>
                 </VBox>
-                <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Dodaj" onMouseClicked="#addTrack"/>
+                <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#addTrack" text="Dodaj" />
             </children>
             <padding>
                 <Insets bottom="15.0" />

@@ -8,6 +8,7 @@ import pl.pb.spotifyclone.models.track.Track;
 
 @Data
 public class Playlist {
+    private Long id;
   @NonNull String title;
   @NonNull List<Track> tracks;
 

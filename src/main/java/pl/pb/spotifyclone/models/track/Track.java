@@ -11,9 +11,10 @@ import lombok.*;
 public class Track {
   private Long id;
   private String name;
-  private String albumName;
-  private String authorName;
+  @Builder.Default private String albumName = "";
+  @Builder.Default private String authorName = "";
   private int releaseYear;
   private byte[] bytes;
   private TrackType fileType;
+  @Builder.Default private Boolean explicit = false;
 }

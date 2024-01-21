@@ -3,6 +3,7 @@ package pl.pb.spotifyclone.viewmodels;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
@@ -26,6 +27,7 @@ public class AddTrackViewModel implements Initializable {
     @FXML private TextField authorTextField;
     @FXML private TextField sourceTextField;
     @FXML private TextField yearTextField;
+    @FXML private CheckBox explicitCheckBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -87,6 +89,7 @@ public class AddTrackViewModel implements Initializable {
             if(!nameTextField.getText().isEmpty()) newTrack.name(nameTextField.getText());
             if(!authorTextField.getText().isEmpty()) newTrack.authorName(authorTextField.getText());
             if(!albumTextField.getText().isEmpty()) newTrack.albumName(albumTextField.getText());
+            if(explicitCheckBox.isSelected()) newTrack.explicit(true);
             trackRepository.addTrack(newTrack.build());
             Alert trackAdded = new Alert(Alert.AlertType.INFORMATION);
             trackAdded.setTitle("Utwór dodany");

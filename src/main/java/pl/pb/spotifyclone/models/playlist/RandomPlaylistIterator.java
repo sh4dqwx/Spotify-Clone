@@ -48,7 +48,7 @@ public final class RandomPlaylistIterator extends PlaylistIterator {
 
     @Override
     public boolean hasPrev() {
-        return prevIndex > 0;
+        return prevIndex >= 0;
     }
 
     @Override

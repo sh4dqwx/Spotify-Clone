@@ -20,7 +20,9 @@ public final class ClassicPlaylistIterator extends PlaylistIterator {
     }
 
     @Override
-    public Track next() {
+    public Track next() throws Exception {
+        if(!hasNext())
+            throw new Exception("There is no next track <rzyg>");
         Track track = tracks.get(nextIndex);
         currentIndex = nextIndex;
         calculateIndexes();
@@ -28,7 +30,9 @@ public final class ClassicPlaylistIterator extends PlaylistIterator {
     }
 
     @Override
-    public Track prev() {
+    public Track prev() throws Exception {
+        if(!hasPrev())
+            throw new Exception("There is no previous track");
         Track track = tracks.get(prevIndex);
         currentIndex = prevIndex;
         calculateIndexes();
@@ -42,7 +46,7 @@ public final class ClassicPlaylistIterator extends PlaylistIterator {
 
     @Override
     public boolean hasPrev() {
-        return prevIndex > 0;
+        return prevIndex >= 0;
     }
 
     @Override

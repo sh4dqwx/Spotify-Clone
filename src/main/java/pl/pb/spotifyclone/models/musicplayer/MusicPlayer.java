@@ -1,5 +1,7 @@
 package pl.pb.spotifyclone.models.musicplayer;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -9,6 +11,8 @@ import pl.pb.spotifyclone.models.interfaces.IMusicPlayer;
 import pl.pb.spotifyclone.models.interfaces.IPublisher;
 import pl.pb.spotifyclone.models.interfaces.ISubscriber;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,6 +22,7 @@ import java.util.List;
 public class MusicPlayer implements IMusicPlayer, IPublisher<MusicPlayerInfo> {
     private final MediaPlayer player;
     private File musicFile;
+    private boolean isPlaying;
     private TrackProgress currentTrackProgress;
     private final List<ISubscriber<MusicPlayerInfo>> subscribers = new ArrayList<>();
 
@@ -58,7 +63,7 @@ public class MusicPlayer implements IMusicPlayer, IPublisher<MusicPlayerInfo> {
             }
         });
 
-        player.currentTimeProperty().addListener((observableValue) -> {
+        player.currentTimeProperty().addListener((observable) -> {
             int position = (int)player.getCurrentTime().toSeconds();
             if(currentTrackProgress.position() == position) return;
             currentTrackProgress = new TrackProgress(position, currentTrackProgress.length());

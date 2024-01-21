@@ -18,6 +18,7 @@ public class MusicService implements IMusicService, IPublisher<MusicPlayerInfo>,
     private Playlist currentPlaylist;
     private PlaylistIterator currentPlaylistIterator;
     private Track currentTrack;
+    private double volume;
     private IMusicPlayer player;
     private boolean isPlaying;
     private final List<ISubscriber<MusicPlayerInfo>> subscribers = new ArrayList<>();
@@ -32,6 +33,7 @@ public class MusicService implements IMusicService, IPublisher<MusicPlayerInfo>,
 
     private void setPlayer() {
         player = new MusicPlayer(currentTrack);
+        setVolume(volume);
         ((IPublisher<MusicPlayerInfo>)player).subscribe(this);
     }
 
@@ -42,7 +44,7 @@ public class MusicService implements IMusicService, IPublisher<MusicPlayerInfo>,
 
     @Override
     public void setSingleTrack(Track track) {
-        if(player != null) player.stop();
+        if(player != null) player.pause();
         currentPlaylist = new Playlist(track.getName(), new ArrayList<>(List.of(track)));
         setTrackOrder(PlaylistIteratorType.CLASSIC);
         if(isPlaying) player.start();
@@ -50,7 +52,7 @@ public class MusicService implements IMusicService, IPublisher<MusicPlayerInfo>,
 
     @Override
     public void setPlaylist(Playlist playlist) {
-        if(player != null) player.stop();
+        if(player != null) player.pause();
         currentPlaylist = playlist;
         setTrackOrder(PlaylistIteratorType.CLASSIC);
         if(isPlaying) player.start();
@@ -58,7 +60,7 @@ public class MusicService implements IMusicService, IPublisher<MusicPlayerInfo>,
 
     @Override
     public void setTrackOrder(PlaylistIteratorType type) {
-        if(player != null) player.stop();
+        if(player != null) player.pause();
         currentPlaylistIterator = currentPlaylist.iterator(type);
         nextTrack();
         if(isPlaying) player.start();
@@ -71,16 +73,26 @@ public class MusicService implements IMusicService, IPublisher<MusicPlayerInfo>,
 
     @Override
     public void nextTrack() {
-        if(player != null) player.stop();
-        currentTrack = currentPlaylistIterator.next();
+        if(player != null) player.pause();
+        try {
+            currentTrack = currentPlaylistIterator.next();
+        } catch (Exception ex) {
+            if(isPlaying) player.start();
+            return;
+        }
         setPlayer();
         if(isPlaying) player.start();
     }
 
     @Override
     public void prevTrack() {
-        if(player != null) player.stop();
-        currentTrack = currentPlaylistIterator.prev();
+        if(player != null) player.pause();
+        try {
+            currentTrack = currentPlaylistIterator.prev();
+        } catch (Exception ex) {
+            if(isPlaying) player.start();
+            return;
+        }
         setPlayer();
         if(isPlaying) player.start();
     }
@@ -105,6 +117,7 @@ public class MusicService implements IMusicService, IPublisher<MusicPlayerInfo>,
 
     @Override
     public void setVolume(double value) {
+        volume = value;
         player.setVolume(value);
     }
 

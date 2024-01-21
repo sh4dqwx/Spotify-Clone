@@ -5,12 +5,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import pl.pb.spotifyclone.models.playlist.Playlist;
+import pl.pb.spotifyclone.utils.FileFormat;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
+import static pl.pb.spotifyclone.utils.FileFormat.JSON;
+import static pl.pb.spotifyclone.utils.FileFormat.XML;
+
 public class Exporter {
-    public static PlaylistExporter createExporter(ExportFormat format) {
+    public static PlaylistExporter createExporter(FileFormat format) {
         switch (format) {
             case XML -> { return new XMLPlaylistExporter(); }
             case JSON -> { return new JSONPlaylistExporter(); }
@@ -48,12 +52,7 @@ public class Exporter {
         }
     }
 
-    public interface PlaylistExporter {
+    private interface PlaylistExporter {
         void exportPlaylist(Playlist playlist, String outputPath) throws JsonProcessingException;
-    }
-
-    public enum ExportFormat {
-        XML,
-        JSON
     }
 }

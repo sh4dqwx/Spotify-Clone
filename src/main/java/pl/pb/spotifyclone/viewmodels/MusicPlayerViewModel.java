@@ -85,7 +85,10 @@ public class MusicPlayerViewModel implements ISubscriber<MusicPlayerInfo>, Initi
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        musicSlider.setOnMouseReleased(mouseEvent -> musicService.setPosition(musicSlider.getValue()));
+        musicSlider.setOnMouseReleased(mouseEvent -> {
+            musicService.setPosition(musicSlider.getValue());
+            positionL.setText(getTimeString((int)musicSlider.getValue()));
+        });
         volumeSlider.valueProperty().addListener((observer, oldValue, newValue) -> {
             musicService.setVolume(newValue.doubleValue());
         });
@@ -97,6 +100,7 @@ public class MusicPlayerViewModel implements ISubscriber<MusicPlayerInfo>, Initi
             playIV.setImage(playWI);
             isPlaying = false;
         } else {
+            musicService.setVolume(volumeSlider.getValue());
             musicService.start();
             playIV.setImage(playGI);
             isPlaying = true;
@@ -148,7 +152,10 @@ public class MusicPlayerViewModel implements ISubscriber<MusicPlayerInfo>, Initi
         lengthL.setText(getTimeString(object.trackProgress().length()));
         positionL.setText(getTimeString(object.trackProgress().position()));
 
-        if(object.status() == MusicPlayerStatus.FINISHED) {
+        if(object.status() == MusicPlayerStatus.PLAYING) {
+            playIV.setImage(playGI);
+            isPlaying = true;
+        } else {
             playIV.setImage(playWI);
             isPlaying = false;
         }

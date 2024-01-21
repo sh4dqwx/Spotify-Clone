@@ -12,8 +12,8 @@ public abstract class PlaylistIterator {
         this.tracks = tracks;
     }
 
-    public abstract Track next();
-    public abstract Track prev();
+    public abstract Track next() throws Exception;
+    public abstract Track prev() throws Exception;
 
     public abstract boolean hasNext();
     public abstract boolean hasPrev();

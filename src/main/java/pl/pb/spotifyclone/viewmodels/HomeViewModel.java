@@ -1,34 +1,59 @@
 package pl.pb.spotifyclone.viewmodels;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
+import pl.pb.spotifyclone.models.interfaces.ISubscriber;
+import pl.pb.spotifyclone.models.playlist.Playlist;
 import pl.pb.spotifyclone.models.track.Track;
+import pl.pb.spotifyclone.repositories.PlaylistRepository;
 import pl.pb.spotifyclone.repositories.TrackRepository;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
-public class HomeViewModel {
+public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable {
     private final TrackRepository trackRepository;
+    private PlaylistRepository playlistRepository;
     private Stage secondStage;
     @FXML private TextField sourceTextField;
     @FXML private TextField yearTextField;
+    @FXML private TableView<Playlist> playlistTableView;
+    @FXML private TableColumn<Playlist,String> playlistNameColumn;
+    @FXML private TableColumn<Playlist,Integer> playlistTrackCountColumn;
     private URL url;
     private FXMLLoader loader;
     private Parent root;
+    private ObservableList<Playlist> observablePlaylistList;
 
     public HomeViewModel() {
         trackRepository = TrackRepository.getInstance();
+        playlistRepository = PlaylistRepository.getInstance();
+        playlistRepository.subscribe(this);
+        observablePlaylistList = FXCollections.observableArrayList(playlistRepository.getPlaylistList());
+    }
+
+    @Override
+    public void initialize (URL location, ResourceBundle resources) {
+        playlistTableView.setItems(observablePlaylistList);
     }
 
     @FXML
-    private void handleNumberTextFieldKeyTyped(KeyEvent event){
+    private void handleNumberTextFieldKeyTyped(KeyEvent event) {
         String input = event.getCharacter();
         if (!input.matches("[0-9]")) {
             event.consume();
@@ -61,7 +86,7 @@ public class HomeViewModel {
         }
     }
 
-    public void showAddTrackPopup(){
+    public void showAddTrackPopup() {
 
         try{
             url = getClass().getResource("/pl/pb/spotifyclone/add-track-dialog.fxml");
@@ -78,8 +103,8 @@ public class HomeViewModel {
             e.printStackTrace();
         }
     }
-    public void showImportPlaylistPopup(){
 
+    public void showImportPlaylistPopup() {
         try{
             url = getClass().getResource("/pl/pb/spotifyclone/import-playlist-dialog.fxml");
             loader = new FXMLLoader(url);
@@ -96,5 +121,28 @@ public class HomeViewModel {
         }
     }
 
+    public void showExportPlaylistPopup() {
+        try{
+            url = getClass().getResource("/pl/pb/spotifyclone/export-playlist-dialog.fxml");
+            loader = new FXMLLoader(url);
+            root = loader.load();
 
+            secondStage = new Stage();
+            secondStage.initModality(Modality.APPLICATION_MODAL);
+            secondStage.setTitle("Exportuj playlistę");
+            secondStage.setScene(new Scene(root));
+            secondStage.show();
+
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void update(List<Playlist> playlists) {
+        observablePlaylistList.clear();
+        observablePlaylistList.addAll(playlists);
+        return;
+    }
 }
