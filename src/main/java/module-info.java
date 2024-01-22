@@ -9,6 +9,7 @@ module pl.pb.spotifyclone {
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.dataformat.xml;
+    requires org.apache.commons.io;
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;

@@ -30,6 +30,7 @@ public class Exporter {
                 String xml = xmlMapper.writeValueAsString(playlist);
                 try(FileWriter writer = new FileWriter(outputPath)) {
                     writer.write(xml);
+                    writer.flush();
                 }
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
@@ -46,13 +47,14 @@ public class Exporter {
             try(FileWriter writer = new FileWriter(outputPath)) {
                 String json = gson.toJson(playlist);
                 writer.write(json);
+                writer.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private interface PlaylistExporter {
+    public interface PlaylistExporter {
         void exportPlaylist(Playlist playlist, String outputPath) throws JsonProcessingException;
     }
 }

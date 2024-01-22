@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -14,6 +15,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
+import pl.pb.spotifyclone.ViewManager;
 import pl.pb.spotifyclone.models.interfaces.ISubscriber;
 import pl.pb.spotifyclone.models.playlist.Playlist;
 import pl.pb.spotifyclone.models.track.Track;
@@ -35,6 +37,7 @@ public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable
     @FXML private TableView<Playlist> playlistTableView;
     @FXML private TableColumn<Playlist,String> playlistNameColumn;
     @FXML private TableColumn<Playlist,Integer> playlistTrackCountColumn;
+    @FXML private TextField searchTextField;
     private URL url;
     private FXMLLoader loader;
     private Parent root;
@@ -49,7 +52,10 @@ public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable
 
     @Override
     public void initialize (URL location, ResourceBundle resources) {
+        playlistNameColumn.setCellValueFactory(new PropertyValueFactory<Playlist,String>("Title"));
+        playlistTrackCountColumn.setCellValueFactory(new PropertyValueFactory<Playlist,Integer>("TracksCount"));
         playlistTableView.setItems(observablePlaylistList);
+        playlistTableView.setPlaceholder(new Label("Brak playlist."));
     }
 
     @FXML
@@ -143,6 +149,16 @@ public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable
     public void update(List<Playlist> playlists) {
         observablePlaylistList.clear();
         observablePlaylistList.addAll(playlists);
-        return;
+    }
+
+    public void searchClicked()
+    {
+        try{
+            ViewManager viewManager = ViewManager.getInstance();
+            viewManager.switchView("filtered-tracks-view.fxml");
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

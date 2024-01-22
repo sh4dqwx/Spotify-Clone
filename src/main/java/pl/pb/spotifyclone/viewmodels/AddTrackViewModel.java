@@ -66,7 +66,6 @@ public class AddTrackViewModel implements Initializable {
                 return;
             }
 
-            byte[] pathInBytes = Files.readAllBytes(path);
             String trackType = sourceTextField.getText().substring(sourceTextField.getText().length() - 3).toLowerCase();
             if(trackType.isEmpty()) {
                 Alert emptyTrackType = new Alert(Alert.AlertType.ERROR);
@@ -84,7 +83,7 @@ public class AddTrackViewModel implements Initializable {
             }
 
             Track.TrackBuilder newTrack = Track.builder()
-                    .bytes(pathInBytes);
+                    .path(path.toString());
             newTrack.fileType(trackType.equals("wav") ? TrackType.WAV : TrackType.MP3);
             if(!nameTextField.getText().isEmpty()) newTrack.name(nameTextField.getText());
             if(!authorTextField.getText().isEmpty()) newTrack.authorName(authorTextField.getText());

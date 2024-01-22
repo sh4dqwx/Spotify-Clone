@@ -114,7 +114,7 @@
       </VBox>
       <VBox spacing="5.0" styleClass="primary_color" stylesheets="@style.css" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
          <children>
-            <TextField styleClass="search-container" promptText="Czego chcesz posłuchać?" />
+            <TextField fx:id="searchTextField" styleClass="search-container" promptText="Czego chcesz posłuchać?" />
             <TableView fx:id="playlistTableView" prefHeight="200.0" styleClass="primary_color" stylesheets="@style.css" VBox.vgrow="ALWAYS">
                <columns>
                   <TableColumn fx:id="playlistNameColumn" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="760.0" text="Nazwa playlisty" reorderable="false"/>

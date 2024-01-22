@@ -16,6 +16,8 @@ import javax.swing.event.ChangeListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class MusicPlayer implements IMusicPlayer, IPublisher<MusicPlayerInfo> {
         try {
             musicFile = File.createTempFile("tmp", track.getFileType().getValue());
             try(FileOutputStream fos = new FileOutputStream(musicFile)) {
-                fos.write(track.getBytes());
+                fos.write(Files.readAllBytes(Paths.get(track.path)));
             }
         } catch(IOException ex) {
             ex.printStackTrace();

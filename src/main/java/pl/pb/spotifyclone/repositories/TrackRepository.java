@@ -46,6 +46,12 @@ public class TrackRepository {
                 .orElse(null);
     }
 
+    public List<Track> getTrackContaining(String text) {
+        return trackList.stream()
+                .filter(track -> track.getName().contains(text))
+                .toList();
+    }
+
     public List<Track> getTrackList() {
         return new ArrayList<>(trackList);
     }

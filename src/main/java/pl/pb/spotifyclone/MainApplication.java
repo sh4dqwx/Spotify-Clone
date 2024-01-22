@@ -33,7 +33,7 @@ public class MainApplication extends Application {
                 .name("CHIPI CHIPI")
                 .albumName("CHAPA CHAPA")
                 .authorName("10h")
-                .bytes(Files.readAllBytes(Paths.get("C:\\Users\\pawel\\Downloads\\CHIPI CHIPI.MP3")))
+                .path("C:\\Users\\pawel\\Downloads\\CHIPI CHIPI.MP3")
                 .fileType(TrackType.MP3)
                 .build();
 
@@ -41,7 +41,7 @@ public class MainApplication extends Application {
                 .name("Rickroll")
                 .albumName("Ricking Rolls")
                 .authorName("Rick Astley")
-                .bytes(Files.readAllBytes(Paths.get("C:\\Users\\pawel\\Downloads\\RickRoll.MP3")))
+                .path("C:\\Users\\pawel\\Downloads\\RickRoll.MP3")
                 .fileType(TrackType.MP3)
                 .build();
 

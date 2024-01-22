@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="500.0" styleClass="primary_color" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pb.spotifyclone.viewmodels.ImportPlaylistViewModel">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="500.0" styleClass="primary_color" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pb.spotifyclone.viewmodels.ExportPlaylistViewModel">
     <top>
         <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
             <BorderPane.margin>
@@ -31,10 +31,10 @@
                                 <Font name="Lato Regular" size="14.0" />
                             </font>
                         </Label>
-                        <TableView prefHeight="200.0" styleClass="primary_color" stylesheets="@style.css">
+                        <TableView fx:id="playlistTableView" prefHeight="200.0" styleClass="primary_color" stylesheets="@style.css" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="410.0" reorderable="false" text="Nazwa playlisty" />
-                                <TableColumn maxWidth="90.0" prefWidth="100.0" reorderable="false" text="Ilość utworów" />
+                                <TableColumn fx:id="playlistNameColumn" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="395.0" text="Nazwa playlisty" reorderable="false"/>
+                                <TableColumn fx:id="playlistTrackCountColumn" prefWidth="100.0" text="Ilość utworów" reorderable="false"/>
                             </columns>
                         </TableView>
                     </children>
@@ -49,7 +49,7 @@
                                     </font>
                                 </Label>
                                 <TextField fx:id="sourceTextField" promptText="Podaj ścieżkę do pliku" />
-                                <Button mnemonicParsing="false" onMouseClicked="#showFileChooserDialog" text="Przeglądaj" />
+                                <Button mnemonicParsing="false" onMouseClicked="#showPathChooserDialog" text="Przeglądaj" />
                             </children>
                         </HBox>
                         <VBox alignment="CENTER" spacing="10.0">
@@ -64,12 +64,12 @@
                                 </Label>
                                 <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
                                     <children>
-                                        <CheckBox mnemonicParsing="false" text="JSON" textFill="#1ed760">
+                                        <CheckBox fx:id="jsonCheckBox" mnemonicParsing="false" text="JSON" textFill="#1ed760" onMouseClicked="#jsonClicked">
                                             <font>
                                                 <Font name="Lato Regular" size="12.0" />
                                             </font>
                                         </CheckBox>
-                                        <CheckBox mnemonicParsing="false" text="XML" textFill="#1ed760">
+                                        <CheckBox fx:id="xmlCheckBox" mnemonicParsing="false" text="XML" textFill="#1ed760" onMouseClicked="#xmlClicked">
                                             <font>
                                                 <Font name="Lato Regular" size="12.0" />
                                             </font>
@@ -84,7 +84,7 @@
 
                     </children>
                 </VBox>
-                <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Eksportuj" />
+                <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Eksportuj" onMouseClicked="#exportClicked" />
             </children>
             <padding>
                 <Insets bottom="15.0" />
