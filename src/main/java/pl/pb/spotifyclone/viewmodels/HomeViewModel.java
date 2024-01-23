@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.scene.Parent;
 import pl.pb.spotifyclone.ViewManager;
 import pl.pb.spotifyclone.models.interfaces.ISubscriber;
+import pl.pb.spotifyclone.models.musicplayer.MusicService;
 import pl.pb.spotifyclone.models.playlist.Playlist;
 import pl.pb.spotifyclone.models.track.Track;
 import pl.pb.spotifyclone.repositories.PlaylistRepository;
@@ -26,9 +27,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable {
+    private final ViewManager viewManager;
+    private final MusicService musicService;
     private final TrackRepository trackRepository;
     private PlaylistRepository playlistRepository;
     private Stage secondStage;
@@ -41,9 +45,12 @@ public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable
     private URL url;
     private FXMLLoader loader;
     private Parent root;
+    private String searchValue;
     private ObservableList<Playlist> observablePlaylistList;
 
     public HomeViewModel() {
+        viewManager = ViewManager.getInstance();
+        musicService = MusicService.getInstance();
         trackRepository = TrackRepository.getInstance();
         playlistRepository = PlaylistRepository.getInstance();
         playlistRepository.subscribe(this);
@@ -56,6 +63,12 @@ public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable
         playlistTrackCountColumn.setCellValueFactory(new PropertyValueFactory<Playlist,Integer>("TracksCount"));
         playlistTableView.setItems(observablePlaylistList);
         playlistTableView.setPlaceholder(new Label("Brak playlist."));
+        playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            musicService.setPlaylist(newValue);
+        });
+        searchTextField.textProperty().addListener((observer, oldValue, newValue) -> {
+            searchValue = newValue;
+        });
     }
 
     @FXML
@@ -153,11 +166,15 @@ public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable
 
     public void searchClicked()
     {
-        try{
-            ViewManager viewManager = ViewManager.getInstance();
-            viewManager.switchView("filtered-tracks-view.fxml");
+        try {
+            url = getClass().getResource("/pl/pb/spotifyclone/filtered-tracks-view.fxml");
+            loader = new FXMLLoader(url);
+            root = loader.load();
 
-        } catch (Exception e){
+            FilteredTracksViewModel viewModel = loader.getController();
+            viewModel.setKeyWord(searchValue == null ? "" : searchValue);
+            viewManager.switchView(root);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

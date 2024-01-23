@@ -47,6 +47,7 @@ public class TrackRepository {
     }
 
     public List<Track> getTrackContaining(String text) {
+        if(text.isEmpty()) return trackList;
         return trackList.stream()
                 .filter(track -> track.getName().contains(text))
                 .toList();

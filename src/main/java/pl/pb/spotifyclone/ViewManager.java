@@ -1,6 +1,7 @@
 package pl.pb.spotifyclone;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -27,18 +28,25 @@ public class ViewManager {
         this.stage = stage;
     }
 
-    public void switchView(String fxmlFile) throws IOException {
+    public void switchView(Parent view) throws IOException {
         if(stage == null) throw new IOException("ViewManager has no access to stage. Use setStage method before.");
 
-        Parent view = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlFile)));
         GridPane mainGrid = (GridPane)stage.getScene().getRoot();
         GridPane.setHgrow(view, Priority.ALWAYS);
         GridPane.setVgrow(view, Priority.ALWAYS);
 
-       if(mainGrid.getChildren().size() >= 2)
-            mainGrid.getChildren().removeFirst();
-        mainGrid.add(view, 0, 0);
+        Node firstView = null;
+        for(Node node : mainGrid.getChildren()) {
+            if(GridPane.getRowIndex(node) == 0) {
+                firstView = node;
+                break;
+            }
+        }
+        if(firstView != null) {
+            mainGrid.getChildren().remove(firstView);
+        }
 
+        mainGrid.add(view, 0, 0);
         stage.show();
     }
 }
