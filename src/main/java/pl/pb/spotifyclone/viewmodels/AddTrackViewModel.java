@@ -98,6 +98,7 @@ public class AddTrackViewModel implements Initializable {
             builder.reset();
             builder.addPath(path.toString());
             builder.addFiletype(trackType.equals("wav") ? TrackType.WAV : TrackType.MP3);
+            builder.addReleaseYear(Integer.parseInt(yearTextField.getText()));
             if(!nameTextField.getText().isEmpty()) builder.addName(nameTextField.getText());
             if(!authorTextField.getText().isEmpty()) builder.addAuthorName(authorTextField.getText());
             if(!albumTextField.getText().isEmpty()) builder.addAlbumName(albumTextField.getText());
