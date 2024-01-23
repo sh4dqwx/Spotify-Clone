@@ -14,9 +14,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.SneakyThrows;
 import pl.pb.spotifyclone.ViewManager;
 import pl.pb.spotifyclone.models.interfaces.ISubscriber;
 import pl.pb.spotifyclone.models.musicplayer.MusicService;
@@ -26,35 +24,41 @@ import pl.pb.spotifyclone.repositories.PlaylistRepository;
 import pl.pb.spotifyclone.repositories.TrackRepository;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.net.URL;
 
-public class FilteredTracksViewModel implements Initializable, ISubscriber<List<Track>> {
-    private ViewManager viewManager;
+public class PlaylistDetailsViewModel implements Initializable, ISubscriber<List<Playlist>> {
     private MusicService musicService;
     private TrackRepository trackRepository;
+    private PlaylistRepository playlistRepository;
+    private ViewManager viewManager;
     private ObservableList<Track> observableTrackList;
+    private Playlist playlist;
     private Track selectedTrack;
-    @FXML public TableView<Track> trackTableView;
+
+    @FXML
+    public TableView<Track> trackTableView;
     @FXML public TableColumn<Track,String> trackNameTableColumn;
     @FXML public TableColumn<Track,String> trackAlbumTableColumn;
     @FXML public TableColumn<Track,String> trackAuthorTableColumn;
     @FXML public TableColumn<Track,Integer> trackReleaseYearTableColumn;
     @FXML public TableColumn<Track,Boolean> trackExplicitTableColumn;
+    @FXML public Label playlistName;
 
-    @Setter private String keyWord;
-
-    public FilteredTracksViewModel() {
-        viewManager = ViewManager.getInstance();
+    public PlaylistDetailsViewModel() {
         musicService = MusicService.getInstance();
         trackRepository = TrackRepository.getInstance();
-        trackRepository.subscribe(this);
+        playlistRepository = PlaylistRepository.getInstance();
+        playlistRepository.subscribe(this);
+        playlistRepository = PlaylistRepository.getInstance();
+        viewManager = ViewManager.getInstance();
         observableTrackList = FXCollections.observableArrayList();
     }
 
     @Override
-    public void initialize (URL location, ResourceBundle resources) {
+    public void initialize (URL location, ResourceBundle resources){
         trackNameTableColumn.setCellValueFactory(new PropertyValueFactory<Track,String>("Name"));
         trackAlbumTableColumn.setCellValueFactory(new PropertyValueFactory<Track,String>("AlbumName"));
         trackAuthorTableColumn.setCellValueFactory(new PropertyValueFactory<Track,String>("AuthorName"));
@@ -69,98 +73,69 @@ public class FilteredTracksViewModel implements Initializable, ISubscriber<List<
         });
     }
 
+    @SneakyThrows
     @Override
-    public void update(List<Track> object) {
+    public void update(List<Playlist> playlists) {
+        Optional<Playlist> foundPlaylist = playlists.stream()
+            .filter(playlistToCompare -> playlistToCompare.getId().equals(playlist.getId()))
+            .findFirst();
+
+        if(foundPlaylist.isEmpty())
+            throw new Exception("Problem");
+
+        playlist = foundPlaylist.get();
         observableTrackList.clear();
-        observableTrackList.addAll(object);
+        observableTrackList.addAll(foundPlaylist.get().getTracks());
+        playlistName.setText(foundPlaylist.get().getTitle());
     }
 
-    public void setKeyWord(String keyWord) {
-        this.keyWord = keyWord;
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
         observableTrackList.clear();
-        observableTrackList.addAll(trackRepository.getTrackContaining(this.keyWord));
+        observableTrackList.addAll(playlist.getTracks());
+        playlistName.setText(playlist.getTitle());
     }
 
     public void goBack() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/pl/pb/spotifyclone/home-view.fxml"));
-            keyWord = "";
             viewManager.switchView(loader.load());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void editTrackClicked() {
-        if (selectedTrack == null) {
-            Alert trackNull = new Alert(Alert.AlertType.ERROR);
-            trackNull.setTitle("Brak utworu");
-            trackNull.setHeaderText("Nie wybrano utworu");
-            trackNull.show();
-            return;
-        }
-
-        try {
-            URL url = getClass().getResource("/pl/pb/spotifyclone/edit-track-dialog.fxml");
-            FXMLLoader loader = new FXMLLoader(url);
-            Parent root = loader.load();
-            EditTrackViewModel viewModel = loader.getController();
-            viewModel.setTrack(selectedTrack);
-            Stage secondStage = new Stage();
-            secondStage.initModality(Modality.APPLICATION_MODAL);
-            secondStage.setTitle("Edytuj utwór");
-            secondStage.setScene(new Scene(root));
-            secondStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteTrackClicked()
+    public void showEditPlaylistPopup()
     {
-        if (selectedTrack == null) {
-            Alert trackNull = new Alert(Alert.AlertType.ERROR);
-            trackNull.setTitle("Brak utworu");
-            trackNull.setHeaderText("Nie wybrano utworu");
-            trackNull.show();
-            return;
-        }
+        try{
+            URL url = getClass().getResource("/pl/pb/spotifyclone/edit-playlist-dialog.fxml");
+            FXMLLoader loader = new FXMLLoader(url);
+            Parent root = loader.load();
 
-        try {
-            String trackName = selectedTrack.getName();
-            if(selectedTrack.equals(musicService.getTrack())) musicService.clear();
-            trackRepository.deleteTrack(selectedTrack);
-            Alert trackDeleted = new Alert(Alert.AlertType.INFORMATION);
-            trackDeleted.setTitle("Utwór usunięty");
-            trackDeleted.setHeaderText("Pomyślnie usunięto utwór " + trackName);
-            trackDeleted.show();
-        } catch (Exception e) {
+            EditPlaylistViewModel viewModel = loader.getController();
+            viewModel.setPlaylist(playlist);
+
+            Stage secondStage = new Stage();
+            secondStage.initModality(Modality.APPLICATION_MODAL);
+            secondStage.setTitle("Edytuj playlistę");
+            secondStage.setScene(new Scene(root));
+            secondStage.show();
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void addTrackToPlaylist() {
-        if (selectedTrack == null) {
-            Alert trackNull = new Alert(Alert.AlertType.ERROR);
-            trackNull.setTitle("Brak utworu");
-            trackNull.setHeaderText("Nie wybrano utworu");
-            trackNull.show();
-            return;
-        }
-
+    public void removeTrackFromPlaylist() {
         try {
-            URL url = getClass().getResource("/pl/pb/spotifyclone/add-track-to-playlist-dialog.fxml");
-            FXMLLoader loader = new FXMLLoader(url);
-            Parent root = loader.load();
-            AddTrackToPlaylistViewModel viewModel = loader.getController();
-            viewModel.setTrack(selectedTrack);
-            Stage secondStage = new Stage();
-            secondStage.initModality(Modality.APPLICATION_MODAL);
-            secondStage.setTitle("Dodaj utwór do playlisty");
-            secondStage.setScene(new Scene(root));
-            secondStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+            playlistRepository.removeTrack(playlist, selectedTrack);
+            trackRepository.notifySubscribers();
+            Alert trackRemoved = new Alert(Alert.AlertType.INFORMATION);
+            trackRemoved.setTitle("Utwór usunięty");
+            trackRemoved.setHeaderText("Pomyślnie usunięto utwór z playlisty");
+            trackRemoved.show();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

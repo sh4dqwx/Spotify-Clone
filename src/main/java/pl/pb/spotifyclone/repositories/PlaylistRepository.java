@@ -8,33 +8,35 @@ import pl.pb.spotifyclone.models.track.Track;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 public class PlaylistRepository implements IPublisher<List<Playlist>> {
-    @Getter
-    private static final PlaylistRepository instance = new PlaylistRepository();
+    private static PlaylistRepository instance;
     private List<Playlist> playlistList;
     private List<ISubscriber<List<Playlist>>> subscribers;
+
+    public static PlaylistRepository getInstance() {
+        if(instance == null)
+            instance = new PlaylistRepository();
+
+        return instance;
+    }
 
     private PlaylistRepository() {
         playlistList = new ArrayList<>();
         subscribers = new ArrayList<>();
     }
 
-    private void notifySubscribers(List<Playlist> playlists) {
-        for(ISubscriber<List<Playlist>> subscriber : subscribers)
-            subscriber.update(playlists);
-    }
-
     public void addPlaylist(Playlist playlist) throws Exception {
         if(playlist == null)
             throw new Exception("Playlist can not be null");
-
         try {
             playlist.setId(playlistList.getLast().getId() + 1);
         } catch (Exception e) {
             playlist.setId(0L);
         }
         playlistList.add(playlist);
-        notifySubscribers(playlistList);
+        notifySubscribers();
     }
 
     public void editPlaylist(Playlist playlist) throws Exception {
@@ -47,14 +49,39 @@ public class PlaylistRepository implements IPublisher<List<Playlist>> {
             else
                 return existingPlaylist;
         });
-        notifySubscribers(playlistList);
+        notifySubscribers();
     }
 
-    public Playlist getPlaylist(String title) {
-        return playlistList.stream()
-                .filter(playlist -> playlist.getTitle().equals(title))
-                .findFirst()
-                .orElse(null);
+    public void deletePlaylist(Playlist playlist) throws Exception {
+        if(playlist == null)
+            throw new Exception("Playlist can not be null");
+
+        playlistList.remove(playlist);
+        notifySubscribers();
+    }
+
+    public void removeTrack(Playlist playlist, Track track) throws Exception {
+        Optional<Playlist> foundPlaylist = playlistList.stream()
+                .filter(playlistToCompare -> playlistToCompare.getId().equals(playlist.getId()))
+                .findFirst();
+
+        if(foundPlaylist.isEmpty())
+            throw new Exception("Problem");
+
+        foundPlaylist.get().getTracks().remove(track);
+        notifySubscribers();
+    }
+
+    public void addTrack(Playlist playlist, Track track) throws Exception {
+        Optional<Playlist> foundPlaylist = playlistList.stream()
+                .filter(playlistToCompare -> playlistToCompare.getId().equals(playlist.getId()))
+                .findFirst();
+
+        if(foundPlaylist.isEmpty())
+            throw new Exception("Problem");
+
+        foundPlaylist.get().getTracks().add(track);
+        notifySubscribers();
     }
 
     public List<Playlist> getPlaylistList() {
@@ -67,5 +94,15 @@ public class PlaylistRepository implements IPublisher<List<Playlist>> {
     @Override
     public void subscribe(ISubscriber<List<Playlist>> subscriber) {
         subscribers.add(subscriber);
+    }
+
+    @Override
+    public void notifySubscribers(List<Playlist> playlists) {
+        for(ISubscriber<List<Playlist>> subscriber : subscribers)
+            subscriber.update(playlists);
+    }
+
+    public void notifySubscribers() {
+        notifySubscribers(playlistList);
     }
 }

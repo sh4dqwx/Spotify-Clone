@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import pl.pb.spotifyclone.models.interfaces.ISubscriber;
 import pl.pb.spotifyclone.models.playlist.Playlist;
 import pl.pb.spotifyclone.repositories.PlaylistRepository;
@@ -18,6 +19,7 @@ import java.net.URL;
 import java.util.List;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ExportPlaylistViewModel implements Initializable {
@@ -30,10 +32,17 @@ public class ExportPlaylistViewModel implements Initializable {
     @FXML private CheckBox xmlCheckBox;
     @FXML private CheckBox jsonCheckBox;
     private ObservableList<Playlist> observablePlaylistList;
+
     public ExportPlaylistViewModel() {
         playlistRepository = PlaylistRepository.getInstance();
         observablePlaylistList = FXCollections.observableArrayList(playlistRepository.getPlaylistList());
     }
+
+    public void closeDialog() {
+        Stage dialog = (Stage) playlistTableView.getScene().getWindow();
+        dialog.close();
+    }
+
     public void showPathChooserDialog()
     {
         DirectoryChooser dc = new DirectoryChooser();
@@ -68,19 +77,43 @@ public class ExportPlaylistViewModel implements Initializable {
 
     public void exportClicked() throws Exception {
         Playlist selectedPlaylist = playlistTableView.getSelectionModel().getSelectedItem();
-        if(xmlCheckBox == null || jsonCheckBox == null)
-            throw new Exception("Problem");
+        if (selectedPlaylist == null) {
+            Alert playlistNull = new Alert(Alert.AlertType.ERROR);
+            playlistNull.setTitle("Brak playlisty");
+            playlistNull.setHeaderText("Nie wybrano playlisty");
+            playlistNull.show();
 
-        if(jsonCheckBox.isSelected()) {
-            Exporter.createExporter(FileFormat.JSON).exportPlaylist(
-                    selectedPlaylist,
-                    sourceTextField.getText() + "\\" + selectedPlaylist.getTitle()+".json"
-            );
-        } else {
-            Exporter.createExporter(FileFormat.XML).exportPlaylist(
-                    selectedPlaylist,
-                    sourceTextField.getText() + "\\" + selectedPlaylist.getTitle()+".xml"
-            );
+        }
+        else if (Objects.equals(sourceTextField.getText(), ""))
+        {
+            Alert noSource = new Alert(Alert.AlertType.ERROR);
+            noSource.setTitle("Brak ścieżki");
+            noSource.setHeaderText("Nie podano ścieżki zapisu");
+            noSource.show();
+        }
+        else
+        {
+            if (xmlCheckBox == null || jsonCheckBox == null)
+                throw new Exception("Problem");
+
+            if (jsonCheckBox.isSelected()) {
+                Exporter.createExporter(FileFormat.JSON).exportPlaylist(
+                        selectedPlaylist,
+                        sourceTextField.getText() + "\\" + selectedPlaylist.getTitle() + ".json"
+                );
+            } else {
+                Exporter.createExporter(FileFormat.XML).exportPlaylist(
+                        selectedPlaylist,
+                        sourceTextField.getText() + "\\" + selectedPlaylist.getTitle() + ".xml"
+                );
+            }
+
+            closeDialog();
+
+            Alert playlistExported = new Alert(Alert.AlertType.INFORMATION);
+            playlistExported.setTitle("Playlista została wyeksportowana");
+            playlistExported.setHeaderText("Pomyślnie wyeksportowano playlistę");
+            playlistExported.show();
         }
     }
 }

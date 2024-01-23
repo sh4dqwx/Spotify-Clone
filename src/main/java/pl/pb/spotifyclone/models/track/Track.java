@@ -5,18 +5,16 @@ import lombok.*;
 import java.nio.file.Path;
 
 
-@Builder
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@Data
+@NoArgsConstructor(force = true)
+@RequiredArgsConstructor
 public class Track {
   public Long id;
-  public String name;
-  @Builder.Default public String albumName = "";
-  @Builder.Default public String authorName = "";
-  public int releaseYear;
-  public String path;
-  public TrackType fileType;
-  @Builder.Default public  Boolean explicit = false;
+  @NonNull public String name;
+  public String albumName = "";
+  public String authorName = "";
+  public int releaseYear = 0;
+  @NonNull public String path;
+  @NonNull public TrackType fileType;
+  public Boolean explicit = false;
 }

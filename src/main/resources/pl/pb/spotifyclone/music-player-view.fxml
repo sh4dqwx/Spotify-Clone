@@ -13,12 +13,12 @@
    <children>
       <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="380.0">
          <children>
-            <Label fx:id="nameL" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Never Gonna Give You Up" textFill="WHITE">
+            <Label fx:id="nameL" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Wybierz utwór" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>
             </Label>
-            <Label fx:id="authorL" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Rick Astley" textFill="WHITE">
+            <Label fx:id="authorL" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textFill="WHITE">
                <font>
                   <Font size="16.0" />
                </font>
@@ -73,7 +73,7 @@
                      </font>
                   </Label>
                   <Slider fx:id="musicSlider" prefHeight="71.0" prefWidth="412.0" />
-                  <Label fx:id="lengthL" alignment="CENTER" prefHeight="34.0" prefWidth="76.0" text="03:34" textAlignment="RIGHT" textFill="WHITE">
+                  <Label fx:id="lengthL" alignment="CENTER" prefHeight="34.0" prefWidth="76.0" text="00:00" textAlignment="RIGHT" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="15.0" />
                      </font>
@@ -96,6 +96,11 @@
                </image>
             </ImageView>
             <Slider fx:id="volumeSlider" prefHeight="14.0" prefWidth="240.0" value="100" />
+            <ImageView fx:id="explicitIV" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#changeExplicitPermission">
+               <image>
+                  <Image url="@icons/explicit_red.png" />
+               </image>
+            </ImageView>
          </children>
       </HBox>
    </children>

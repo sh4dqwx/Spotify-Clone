@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
@@ -10,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="secondary-color" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pb.spotifyclone.viewmodels.FilteredTracksViewModel">
+<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="secondary-color" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pb.spotifyclone.viewmodels.PlaylistDetailsViewModel">
     <children>
         <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" styleClass="secondary-color" stylesheets="@style.css">
             <children>
@@ -40,7 +41,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                     </padding>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" prefHeight="21.0" prefWidth="65.0" spacing="35.0" styleClass="primary_color" stylesheets="@style.css" onMouseClicked="#editTrackClicked">
+                <HBox alignment="CENTER_LEFT" onMouseClicked="#showEditPlaylistPopup" prefHeight="21.0" prefWidth="65.0" spacing="35.0" styleClass="primary_color" stylesheets="@style.css">
                     <children>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="primary_color">
                             <image>
@@ -50,30 +51,7 @@
                                 <Insets left="50.0" />
                             </HBox.margin>
                         </ImageView>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Edytuj utwór" textAlignment="CENTER">
-                            <font>
-                                <Font name="Lato Regular" size="22.0" />
-                            </font>
-                        </Text>
-                    </children>
-                    <opaqueInsets>
-                        <Insets />
-                    </opaqueInsets>
-                    <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                    </padding>
-                </HBox>
-                <HBox alignment="CENTER_LEFT" prefHeight="21.0" prefWidth="65.0" spacing="35.0" styleClass="primary_color" stylesheets="@style.css" onMouseClicked="#deleteTrackClicked">
-                    <children>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="primary_color">
-                            <image>
-                                <Image url="@icons/delete_white.png" />
-                            </image>
-                            <HBox.margin>
-                                <Insets left="50.0" />
-                            </HBox.margin>
-                        </ImageView>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Usuń utwór" textAlignment="CENTER">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Edytuj playlistę" textAlignment="CENTER">
                             <font>
                                 <Font name="Lato Regular" size="22.0" />
                             </font>
@@ -90,13 +68,13 @@
                     <children>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="primary_color">
                             <image>
-                                <Image url="@icons/add_to_playlist_white.png" />
+                                <Image url="@icons/remove_from_playlist_white.png" />
                             </image>
                             <HBox.margin>
                                 <Insets left="50.0" />
                             </HBox.margin>
                         </ImageView>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Dodaj utwór do playlisty" textAlignment="CENTER" onMouseClicked="#addTrackToPlaylist">
+                        <Text fill="WHITE" onMouseClicked="#removeTrackFromPlaylist" strokeType="OUTSIDE" strokeWidth="0.0" text="Usuń utwór z playlisty" textAlignment="CENTER">
                             <font>
                                 <Font name="Lato Regular" size="22.0" />
                             </font>
@@ -109,7 +87,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                     </padding>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" prefHeight="21.0" prefWidth="65.0" spacing="35.0" styleClass="primary_color" stylesheets="@style.css" onMouseClicked="#goBack">
+                <HBox alignment="CENTER_LEFT" onMouseClicked="#goBack" prefHeight="21.0" prefWidth="65.0" spacing="35.0" styleClass="primary_color" stylesheets="@style.css">
                     <children>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="primary_color">
                             <image>
@@ -134,14 +112,19 @@
                 </HBox>
             </children>
         </VBox>
-        <VBox spacing="5.0" styleClass="primary_color" stylesheets="@style.css" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+        <VBox alignment="CENTER" spacing="15.0" styleClass="primary_color" stylesheets="@style.css" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
             <children>
+                <Label fx:id="playlistName" alignment="CENTER" contentDisplay="CENTER" stylesheets="@style.css" textAlignment="CENTER" textFill="#1ed760">
+                    <font>
+                        <Font name="Lato Bold" size="24.0" />
+                    </font>
+                </Label>
                 <TableView fx:id="trackTableView" prefHeight="200.0" styleClass="primary_color" stylesheets="@style.css" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="trackNameTableColumn" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="200.0" reorderable="false" text="Nazwa utworu" />
-                        <TableColumn fx:id="trackAlbumTableColumn" editable="false" prefWidth="190.0" text="Nazwa albumu" />
-                        <TableColumn fx:id="trackAuthorTableColumn" prefWidth="200.0" text="Autor" reorderable="false"/>
-                        <TableColumn fx:id="trackReleaseYearTableColumn" prefWidth="100.0" text="Rok wydania" reorderable="false"/>
+                        <TableColumn fx:id="trackNameTableColumn" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="250.0" reorderable="false" text="Nazwa utworu" />
+                        <TableColumn fx:id="trackAlbumTableColumn" editable="false" prefWidth="250.0" text="Nazwa albumu" />
+                        <TableColumn fx:id="trackAuthorTableColumn" prefWidth="250.0" reorderable="false" text="Autor" />
+                        <TableColumn fx:id="trackReleaseYearTableColumn" prefWidth="100.0" reorderable="false" text="Rok wydania" />
                         <TableColumn fx:id="trackExplicitTableColumn" prefWidth="130.0" reorderable="false" text="Treści nieprzyzwoite" />
                     </columns>
                 </TableView>

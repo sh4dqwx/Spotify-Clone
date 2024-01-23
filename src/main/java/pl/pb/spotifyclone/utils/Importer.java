@@ -17,8 +17,8 @@ public class Importer {
     }
     public ImporterPrototype getPrototype(FileFormat format) {
         switch (format) {
-            case XML -> { return jsonPlaylistImporter.clone(); }
-            case JSON -> { return xmlPlaylistImporter.clone(); }
+            case XML -> { return xmlPlaylistImporter.clone(); }
+            case JSON -> { return jsonPlaylistImporter.clone(); }
             default -> throw new IllegalArgumentException("Unsupported format");
         }
     }

@@ -25,12 +25,15 @@ public class MusicPlayerViewModel implements ISubscriber<MusicPlayerInfo>, Initi
     private boolean isPlaying = false;
     private boolean isRandom = false;
     private boolean isLooped = false;
+    private boolean isExplicitPermission = false;
     private final Image playWI;
     private final Image playGI;
     private final Image randomWI;
     private final Image randomGI;
     private final Image repeatWI;
     private final Image repeatGI;
+    private final Image explicitRI;
+    private final Image explicitGI;
 
     @FXML
     private ImageView playIV;
@@ -38,6 +41,8 @@ public class MusicPlayerViewModel implements ISubscriber<MusicPlayerInfo>, Initi
     private ImageView randomIV;
     @FXML
     private ImageView loopIV;
+    @FXML
+    private ImageView explicitIV;
     @FXML
     private Slider musicSlider;
     @FXML
@@ -80,6 +85,12 @@ public class MusicPlayerViewModel implements ISubscriber<MusicPlayerInfo>, Initi
         );
         repeatGI = new Image(Objects.requireNonNull(
                 getClass().getResource("/pl/pb/spotifyclone/icons/repeat_green.png")).toURI().toString()
+        );
+        explicitRI = new Image(Objects.requireNonNull(
+                getClass().getResource("/pl/pb/spotifyclone/icons/explicit_red.png")).toURI().toString()
+        );
+        explicitGI = new Image(Objects.requireNonNull(
+                getClass().getResource("/pl/pb/spotifyclone/icons/explicit_green.png")).toURI().toString()
         );
     }
 
@@ -136,6 +147,18 @@ public class MusicPlayerViewModel implements ISubscriber<MusicPlayerInfo>, Initi
             musicService.setLooped(true);
             loopIV.setImage(repeatGI);
             isLooped = true;
+        }
+    }
+
+    public void changeExplicitPermission() {
+        if(isExplicitPermission) {
+            musicService.setExplicitPermission(false);
+            explicitIV.setImage(explicitRI);
+            isExplicitPermission = false;
+        } else {
+            musicService.setExplicitPermission(true);
+            explicitIV.setImage(explicitGI);
+            isExplicitPermission = true;
         }
     }
 

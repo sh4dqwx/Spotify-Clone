@@ -25,14 +25,13 @@ public class MusicPlayer implements IMusicPlayer, IPublisher<MusicPlayerInfo> {
     private final MediaPlayer player;
     private File musicFile;
     private boolean isPlaying;
+    private final Track track;
     private TrackProgress currentTrackProgress;
     private final List<ISubscriber<MusicPlayerInfo>> subscribers = new ArrayList<>();
 
-    private void notifySubscribers(MusicPlayerInfo musicPlayerInfo) {
-        for(ISubscriber<MusicPlayerInfo> subscriber : subscribers) subscriber.update(musicPlayerInfo);
-    }
-
     public MusicPlayer(Track track) {
+        this.track = track;
+
         try {
             musicFile = File.createTempFile("tmp", track.getFileType().getValue());
             try(FileOutputStream fos = new FileOutputStream(musicFile)) {
@@ -88,6 +87,9 @@ public class MusicPlayer implements IMusicPlayer, IPublisher<MusicPlayerInfo> {
     }
 
     @Override
+    public Track getTrack() { return track; }
+
+    @Override
     public void start() {
         player.play();
     }
@@ -115,5 +117,10 @@ public class MusicPlayer implements IMusicPlayer, IPublisher<MusicPlayerInfo> {
     @Override
     public void subscribe(ISubscriber<MusicPlayerInfo> subscriber) {
         subscribers.add(subscriber);
+    }
+
+    @Override
+    public void notifySubscribers(MusicPlayerInfo musicPlayerInfo) {
+        for(ISubscriber<MusicPlayerInfo> subscriber : subscribers) subscriber.update(musicPlayerInfo);
     }
 }

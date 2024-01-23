@@ -6,10 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
@@ -36,6 +33,8 @@ public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable
     private final TrackRepository trackRepository;
     private PlaylistRepository playlistRepository;
     private Stage secondStage;
+    private Playlist selectedPlaylist;
+
     @FXML private TextField sourceTextField;
     @FXML private TextField yearTextField;
     @FXML private TableView<Playlist> playlistTableView;
@@ -63,50 +62,21 @@ public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable
         playlistTrackCountColumn.setCellValueFactory(new PropertyValueFactory<Playlist,Integer>("TracksCount"));
         playlistTableView.setItems(observablePlaylistList);
         playlistTableView.setPlaceholder(new Label("Brak playlist."));
-        playlistTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            musicService.setPlaylist(newValue);
+        playlistTableView.setOnMouseClicked(event -> {
+            selectedPlaylist = playlistTableView.getSelectionModel().getSelectedItem();
+            if(selectedPlaylist == null) return;
+            if(event.getClickCount() == 2) {
+                showPlaylistDetails(selectedPlaylist);
+            } else if(event.getClickCount() == 1) {
+                musicService.setPlaylist(selectedPlaylist);
+            }
         });
         searchTextField.textProperty().addListener((observer, oldValue, newValue) -> {
             searchValue = newValue;
         });
     }
 
-    @FXML
-    private void handleNumberTextFieldKeyTyped(KeyEvent event) {
-        String input = event.getCharacter();
-        if (!input.matches("[0-9]")) {
-            event.consume();
-        }
-    }
-
-    public void addTrack(Track track) {
-        try {
-            trackRepository.addTrack(track);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-    }
-
-    public void editTrack(Track track) {
-        try {
-            trackRepository.editTrack(track);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public void getTrack(String title)
-    {
-        try {
-            trackRepository.getTrack(title);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
     public void showAddTrackPopup() {
-
         try{
             url = getClass().getResource("/pl/pb/spotifyclone/add-track-dialog.fxml");
             loader = new FXMLLoader(url);
@@ -119,6 +89,22 @@ public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable
             secondStage.show();
 
         } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void showAddPlaylistPopup() {
+        try {
+            url = getClass().getResource("/pl/pb/spotifyclone/create-playlist-dialog.fxml");
+            loader = new FXMLLoader(url);
+            root = loader.load();
+
+            secondStage = new Stage();
+            secondStage.initModality(Modality.APPLICATION_MODAL);
+            secondStage.setTitle("Utwórz playlistę");
+            secondStage.setScene(new Scene(root));
+            secondStage.show();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -164,6 +150,20 @@ public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable
         observablePlaylistList.addAll(playlists);
     }
 
+    public void showPlaylistDetails(Playlist playlist) {
+        try {
+            url = getClass().getResource("/pl/pb/spotifyclone/playlist-details-view.fxml");
+            loader = new FXMLLoader(url);
+            root = loader.load();
+
+            PlaylistDetailsViewModel viewModel = loader.getController();
+            viewModel.setPlaylist(playlist);
+            viewManager.switchView(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void searchClicked()
     {
         try {
@@ -174,6 +174,28 @@ public class HomeViewModel implements ISubscriber<List<Playlist>>, Initializable
             FilteredTracksViewModel viewModel = loader.getController();
             viewModel.setKeyWord(searchValue == null ? "" : searchValue);
             viewManager.switchView(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deletePlaylistClicked()
+    {
+        if(selectedPlaylist == null) {
+            Alert playlistNull = new Alert(Alert.AlertType.ERROR);
+            playlistNull.setTitle("Brak playlisty");
+            playlistNull.setHeaderText("Nie wybrano playlisty");
+            playlistNull.show();
+            return;
+        }
+        try {
+            String playlistName = selectedPlaylist.getTitle();
+            if(selectedPlaylist.equals(musicService.getPlaylist())) musicService.clear();
+            playlistRepository.deletePlaylist(selectedPlaylist);
+            Alert playlistDeleted = new Alert(Alert.AlertType.INFORMATION);
+            playlistDeleted.setTitle("Playlista usunięta");
+            playlistDeleted.setHeaderText("Pomyślnie usunięto playlistę " + playlistName);
+            playlistDeleted.show();
         } catch (Exception e) {
             e.printStackTrace();
         }

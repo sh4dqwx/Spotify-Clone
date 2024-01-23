@@ -2,7 +2,6 @@ package pl.pb.spotifyclone.viewmodels;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -24,10 +23,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
-public class AddTrackViewModel implements Initializable {
+public class EditTrackViewModel implements Initializable {
     private final TrackRepository trackRepository;
     private final TrackDirector trackDirector;
-
+    private Track track;
     @FXML private TextField nameTextField;
     @FXML private TextField albumTextField;
     @FXML private TextField authorTextField;
@@ -40,7 +39,7 @@ public class AddTrackViewModel implements Initializable {
         yearTextField.setOnKeyTyped(this::handleNumberTextFieldKeyTyped);
     }
 
-    public AddTrackViewModel(){
+    public EditTrackViewModel(){
         trackRepository = TrackRepository.getInstance();
         trackDirector = TrackDirector.getInstance();
     }
@@ -59,7 +58,7 @@ public class AddTrackViewModel implements Initializable {
         }
     }
 
-    public void addTrack() {
+    public void editTrack() {
         if (nameTextField.getText().isEmpty()) {
             Alert emptyTrackName = new Alert(Alert.AlertType.ERROR);
             emptyTrackName.setTitle("Nazwa utworu pusta");
@@ -94,21 +93,19 @@ public class AddTrackViewModel implements Initializable {
                 return;
             }
 
-            ITrackBuilder builder = trackDirector.getBuilder();
-            builder.reset();
-            builder.addPath(path.toString());
-            builder.addFiletype(trackType.equals("wav") ? TrackType.WAV : TrackType.MP3);
-            if(!nameTextField.getText().isEmpty()) builder.addName(nameTextField.getText());
-            if(!authorTextField.getText().isEmpty()) builder.addAuthorName(authorTextField.getText());
-            if(!albumTextField.getText().isEmpty()) builder.addAlbumName(albumTextField.getText());
-            if(explicitCheckBox.isSelected()) builder.addExplicit(true);
-            trackRepository.addTrack(builder.getResult());
+            track.setName(nameTextField.getText());
+            track.setAlbumName(albumTextField.getText());
+            track.setAuthorName(authorTextField.getText());
+            track.setReleaseYear(Integer.parseInt(yearTextField.getText()));
+            track.setFileType(trackType.equals("wav") ? TrackType.WAV : TrackType.MP3);
+            track.setExplicit(explicitCheckBox.isSelected());
 
+            trackRepository.editTrack(track);
             closeDialog();
 
             Alert trackAdded = new Alert(Alert.AlertType.INFORMATION);
-            trackAdded.setTitle("Utwór dodany");
-            trackAdded.setHeaderText("Dodano utwór: " + nameTextField.getText());
+            trackAdded.setTitle("Utwór został edytowany");
+            trackAdded.setHeaderText("Zedytowano utwór: " + nameTextField.getText());
             trackAdded.show();
 
         } catch (Exception e) {
@@ -128,4 +125,13 @@ public class AddTrackViewModel implements Initializable {
         }
     }
 
+    public void setTrack (Track track) {
+        this.track = track;
+        nameTextField.setText(track.getName());
+        albumTextField.setText(track.getAlbumName());
+        authorTextField.setText(track.getAuthorName());
+        yearTextField.setText(String.valueOf(track.getReleaseYear()));
+        sourceTextField.setText(track.getPath());
+        explicitCheckBox.setSelected(track.getExplicit());
+    }
 }
